@@ -121,6 +121,18 @@ class PresentacionController {
       throw error;
     }
   }
+
+  static async getTodasPresentaciones(){
+    try {
+      const presentaciones = await presentacionService.getAll();
+      if (!presentaciones || presentaciones.length === 0) {
+        throw new AppError("No se encontraron presentaciones", 404);
+      }
+      return presentaciones;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = PresentacionController;

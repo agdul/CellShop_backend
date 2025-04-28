@@ -3,6 +3,15 @@ const ProductoHandler = require('../handlers/productoHandler');
 const PresentacionHandler = require('../handlers/presentacionHandler');
 
 const router = Router();
+ 
+router.get('/presentacion', PresentacionHandler.getTodasPresentaciones);
+router.get('/:id/presentacion', PresentacionHandler.getAllByProducto);
+router.get('/:id/presentacion/:id_presentacion', PresentacionHandler.getPresentacion);
+router.post('/:id/presentacion', PresentacionHandler.createPresentacion);
+router.put('/:id/presentacion/:id_presentacion', PresentacionHandler.updatePresentacion);
+router.delete('/:id/presentacion/:id_presentacion', PresentacionHandler.deletePresentacion);
+
+// ---------------------------------------------------------------------
 
 router.get('/', ProductoHandler.getProducto);
 router.get('/:id', ProductoHandler.getProducto);
@@ -10,13 +19,6 @@ router.post('/', ProductoHandler.createProducto);
 router.put('/:id', ProductoHandler.updateProducto);
 router.delete('/:id', ProductoHandler.deleteProducto);
 
-// ---------------------------------------------------------------------
-router.get('/:id/presentacion', PresentacionHandler.getAllByProducto);
-router.get('/:id/presentacion/:id_presentacion', PresentacionHandler.getPresentacion);
-router.post('/:id/presentacion', PresentacionHandler.createPresentacion);
-router.put('/:id/presentacion/:id_presentacion', PresentacionHandler.updatePresentacion);
-router.delete('/:id/presentacion/:id_presentacion', PresentacionHandler.deletePresentacion);
-router.get('/presentacion', PresentacionHandler.getPresentacion);
 
 
 

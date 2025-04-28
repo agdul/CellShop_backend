@@ -112,6 +112,19 @@ class PresentacionService {
     // }
     return producto;
   }
+
+  // const getAllPresentaciones = async () => {
+  //   const productos = await Producto.findAll({
+  //     include: [{
+  //       model: Presentacion,
+  //       as: 'presentaciones'
+  //     }]
+  //   });
+  
+  //   return productos;
+  // };
+
+
 }
 
 module.exports = PresentacionService;

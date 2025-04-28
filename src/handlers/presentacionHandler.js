@@ -106,6 +106,22 @@ class PresentacionHandler {
             res.status(500).json({ message: 'Error interno del servidor', error: error.message });
         }
     }
+
+    static async getTodasPresentaciones(req, res) {
+        try {
+            const presentaciones = await PresentacionController.getTodasPresentaciones();
+            if (!presentaciones || presentaciones.length === 0) {
+                throw new AppError('No se encontraron presentaciones', 404);
+            }
+            res.status(200).json(presentaciones);
+        } catch (error) {
+            console.error('❌ Error al obtener todas las presentaciones:', error);
+            if (error instanceof AppError) {
+                return res.status(error.statusCode).json({ message: error.message });
+            }
+            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        }
+    }
 }
 
 module.exports = PresentacionHandler;
