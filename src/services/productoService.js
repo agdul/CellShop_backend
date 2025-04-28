@@ -28,7 +28,7 @@ class ProductoService {
     const t = await db.sequelize.transaction(); // Crear transacción
     try {
       await this.existeByNombre(data.nombre_producto); // Verificar si el producto ya existe
-      //await this.verificarProductoActivo(data.id_producto); // Verificar si el producto está activo
+     // await this.verificarProductoActivo(data.id_producto); // Verificar si el producto está activo
       // Realizar la operación dentro de la transacción
       const producto = await this.producto.create(data, { transaction: t });
       // Si todo va bien, hacer commit

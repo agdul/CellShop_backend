@@ -1,7 +1,7 @@
 {
     "development": {
       "username": "postgres",
-      "password": "root",
+      "password": "admin",
       "database": "db_cellshop",
       "host": "localhost",
       "dialect": "postgres",
