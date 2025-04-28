@@ -21,6 +21,23 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+      },
+      descripcion: {
+        type: Sequelize.STRING(255),
+        allowNull: false
+      },
+      stock: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
+      precio_compra: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: false
+      },
+      porcentaje_aumento: {
+        type: Sequelize.DECIMAL(5, 2),
+        allowNull: false
       }
     });
   },
