@@ -64,11 +64,11 @@ class PresentacionService {
     }
   }
 
-  async delete(id) {
+  async delete(id_presentacion) {
     const t = await db.sequelize.transaction();
     try {
       const deleted = await this.presentacion.destroy({
-        where: { id_presentacion: id },
+        where: { id_presentacion: id_presentacion },
         transaction: t,
       });
       await t.commit();

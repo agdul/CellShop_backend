@@ -77,9 +77,9 @@ class PresentacionController {
         throw error;
     }
 }
-  static async delete(id) {
+  static async delete(id_presentacion) {
     try {
-      return await presentacionService.delete(id);
+      return await presentacionService.delete(id_presentacion);
     } catch (error) {
       throw error;
     }

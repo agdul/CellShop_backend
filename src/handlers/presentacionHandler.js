@@ -95,8 +95,8 @@ class PresentacionHandler {
 
     static async deletePresentacion(req, res) {
         try {
-            const { id } = req.params;
-            const deleted = await PresentacionController.delete(id);
+            const { id_presentacion } = req.params;
+            const deleted = await PresentacionController.delete(id_presentacion);
             if (!deleted) {
                 return res.status(404).json({ message: 'Presentación no encontrada' });
             }
