@@ -112,19 +112,19 @@ class ProductoService {
 
   async verificarProductoActivo(id_producto) {
     const producto = await this.producto.findOne({
-        where: { id_producto }
+      where: { id_producto }
     });
-
+  
     if (!producto) {
-        throw new AppError('Producto no encontrado', 404);
+      throw new AppError('Producto no encontrado', 404);
     }
-
-    if (producto.estado_producto !== 'Activo' || producto.estado !== 'activo' || producto.estado !== true) {
-        throw new AppError('El producto no está activo', 400);
+  
+    if (producto.estado_producto !== true) {
+      throw new AppError('El producto no está activo', 400);
     }
-
+  
     return producto;
-}
+  }
 
 };
 

@@ -2,6 +2,8 @@ const CategoriaController = require('../controllers/categoriaController');
 const AppError = require('../utilits/helpers/errors');
 
 class CategoriaHandler {
+// -----------------------------------------------------------------
+
     static async getTodasCategorias (req, res) {
         try {
             const categorias = await CategoriaController.getTodasCategorias();
@@ -15,7 +17,6 @@ class CategoriaHandler {
         }
 
     }
-
     static async getCategoriaById (req, res) {
         const { id_categoria } = req.params;
         try {
@@ -33,7 +34,6 @@ class CategoriaHandler {
             res.status(500).json({ message: 'Error interno del servidor', error: error.message });
         }
     }
-
     static async createCategoria (req, res) {
         try {
             await CategoriaHandler.validarEmptyBody(req, res);
@@ -50,7 +50,41 @@ class CategoriaHandler {
         }
 
     }
+    static async updateCategoria(req, res) {
+        try {
+            await CategoriaHandler.validarEmptyBody(req, res);
+            const { id_categoria } = req.params;
+            const data = req.body;
+            data.id_categoria = id_categoria;
+            console.log('data', data);
+            const categoria = await CategoriaController.updateCategoria(data);
+            res.status(200).json(categoria);
+        } catch (error) {
+            if (error instanceof AppError) {
+                return res.status(error.statusCode).json({ message: error.message });
+            }
+            console.error('❌ Error al actualizar la categoría:', error);
+            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        }
+    }
+    static async deleteCategoria (req, res) {
+        try {
+            const { id_categoria } = req.params;
+            if (!id_categoria) {
+                throw new AppError('ID de categoría no proporcionado', 400);
+            }
+            const categoria = await CategoriaController.deleteCategoria(parseInt(id_categoria));
+            res.status(200).json(categoria);
+        } catch (error) {
+            if (error instanceof AppError) {
+                return res.status(error.statusCode).json({ message: error.message });
+            }
+            console.error('❌ Error al eliminar la categoría:', error);
+            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        }
+    }
 
+// -----------------------------------------------------------------
 
 
 
@@ -65,6 +99,9 @@ class CategoriaHandler {
             }    
         }
     }
+
+
+// -----------------------------------------------------------------
 }
 
 module.exports = CategoriaHandler;

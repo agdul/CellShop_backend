@@ -35,7 +35,7 @@ class PresentacionController {
       const { nombre_presentacion, id_producto } = data;
       const productoExiste = await productoService.existeById(id_producto);
       if (!productoExiste) {
-        throw new AppError("El producto no existe", 404);
+        throw new AppError("El producto por id url no existe", 404);
       }
       await this.existeByNombre(nombre_presentacion);
       return await presentacionService.create(data);
@@ -69,7 +69,8 @@ class PresentacionController {
         }
 
         // Actualizar
-        const presentacion = await presentacionService.update(id_presentacion, data, { transaction: t });
+        data.id_presentacion = id_presentacion;
+        const presentacion = await presentacionService.update(data, { transaction: t });
         await t.commit();
         return presentacion;
     } catch (error) {
@@ -96,7 +97,6 @@ class PresentacionController {
       throw error;
     }
   }
-
   static async existeByNombre(nombre) {
     try {
       const presentacion = await presentacionService.getByNombre(nombre);

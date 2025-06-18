@@ -29,8 +29,12 @@ class PresentacionService {
   async create(data) {
     const t = await db.sequelize.transaction();
     try {
-      //await productoService.verificarProductoActivo(data.id_producto);
+      const { nombre_presentacion, id_producto } = data;
 
+      await productoService.verificarProductoActivo(id_producto);
+      await this.existeNombrePresentacion(nombre_presentacion);
+      //await this.presentacion.existeById(id_producto);
+      
       const nuevaPresentacion = await this.presentacion.create(data, {
         transaction: t,
       });
@@ -43,26 +47,25 @@ class PresentacionService {
     }
   }
 
-  async update(id, data) {
+  async update(data) {
     const t = await db.sequelize.transaction();
     try {
-      const presentacionExistente = await this.presentacion.findByPk(id);
-      if (!presentacionExistente) {
-        throw new AppError("Presentación no encontrada", 404);
-      }
+      const { id_presentacion } = data;
+      await this.existeById(id_presentacion);
 
       await this.presentacion.update(data, {
-        where: { id_presentacion: id },
+        where: { id_presentacion },
         transaction: t,
       });
-      await t.commit();
 
-      return await this.getById(id);
+      await t.commit();
+      return await this.getById(id_presentacion);
     } catch (error) {
       await t.rollback();
       throw error;
     }
   }
+
 
   async delete(id_presentacion) {
     const t = await db.sequelize.transaction();
@@ -88,11 +91,18 @@ class PresentacionService {
         include: [{ association: "producto" }] // Opcional: incluir relación con producto
     });
 }
-  async existeById(id) {
-    const existePresentacion = await this.presentacion.findOne({
-      where: { id_presentacion: id },
-    });
-    return !!existePresentacion;
+  async existeById(id_presentacion) {
+    try {
+      const existePresentacion = await this.presentacion.findOne({
+        where: { id_presentacion },
+      });
+      if (!existePresentacion) {
+        throw new AppError("Presentación no encontrada", 404);
+      }
+      return existePresentacion;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getAllByProducto(id_producto) {
@@ -102,16 +112,29 @@ class PresentacionService {
     });
   }
 
-  async verificarPresentacionActivo(id_presentacion) {
-    const presentacion = await this.existeById(id_presentacion);
-    if (!presentacion) {
-      throw new AppError("Presentacion no encontrado", 404);
+
+  async existeNombrePresentacion(nombre_presentacion){
+    try {
+      const existePresentacion = await this.presentacion.findOne({
+        where: { nombre_presentacion },
+      });
+      if (existePresentacion) {
+        throw new AppError("La presentación ya existe", 400);
+      }
+      return existePresentacion;
+    } catch (error) {
+      throw error;
+      
     }
-    // if (presentacion.estado !== 'Activo' && producto.estado !== true) {
-    //     throw new AppError('El producto no está activo', 400);
-    // }
-    return producto;
   }
+
+  // async verificarPresentacionActivo(id_presentacion) {
+  //   const presentacion = await this.existeById(id_presentacion);
+  //   if (presentacion.estado !== 'Activo' && producto.estado !== true) {
+  //       throw new AppError('El producto no está activo', 400);
+  //   }
+  //   return presentacion;
+  // }
 
   // const getAllPresentaciones = async () => {
   //   const productos = await Producto.findAll({

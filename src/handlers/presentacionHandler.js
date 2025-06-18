@@ -4,7 +4,7 @@ const AppError = require('../utilits/helpers/errors');
 class PresentacionHandler {
     static async getAllByProducto(req, res) {
         try {
-            const { id, id_presentacion } = req.params || {};
+            const { id } = req.params;
             const presentacion = await PresentacionController.getAllByProducto(id);
             if (!presentacion || presentacion.length === 0) {
                 throw new AppError('No se encontraron presentaciones', 404);
@@ -71,7 +71,7 @@ class PresentacionHandler {
             res.status(500).json({ message: 'Error interno del servidor', error: error.message });
         }
     }
-
+    
     static async updatePresentacion(req, res) {
         try {
             const { id_presentacion} = req.params;
