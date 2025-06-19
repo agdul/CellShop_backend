@@ -193,8 +193,10 @@ class UsuarioService {
             where: { usuario: usuario },
         });
         if (user) {
-            throw new AppError('El nombre de usuario ya está en uso', 400);
+            return user;
         }
+        return false;
+        
     };
 
     // Validar si el dni ya existe
