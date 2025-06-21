@@ -2,22 +2,26 @@ const { Router } = require('express');
 const ProductoHandler = require('../handlers/productoHandler');
 const PresentacionHandler = require('../handlers/presentacionHandler');
 
+const { verificarTokenMiddlerware } = require('../middleware/tokenMiddleware');
+const { authAdmin } = require('../middleware/authMiddleware');
+
+
 const router = Router();
  
 router.get('/presentacion', PresentacionHandler.getTodasPresentaciones);
 router.get('/:id/presentacion', PresentacionHandler.getAllByProducto);
 router.get('/:id/presentacion/:id_presentacion', PresentacionHandler.getPresentacion);
-router.post('/:id/presentacion', PresentacionHandler.createPresentacion);
-router.put('/:id/presentacion/:id_presentacion', PresentacionHandler.updatePresentacion);
-router.delete('/:id/presentacion/:id_presentacion', PresentacionHandler.deletePresentacion);
+router.post('/:id/presentacion', verificarTokenMiddlerware, authAdmin,PresentacionHandler.createPresentacion);
+router.put('/:id/presentacion/:id_presentacion', verificarTokenMiddlerware, authAdmin, PresentacionHandler.updatePresentacion);
+router.delete('/:id/presentacion/:id_presentacion', verificarTokenMiddlerware, authAdmin, PresentacionHandler.deletePresentacion);
 
 // ---------------------------------------------------------------------
 
 router.get('/', ProductoHandler.getProducto);
 router.get('/:id', ProductoHandler.getProducto);
-router.post('/', ProductoHandler.createProducto);
-router.put('/:id', ProductoHandler.updateProducto);
-router.delete('/:id', ProductoHandler.deleteProducto);
+router.post('/', verificarTokenMiddlerware, authAdmin, ProductoHandler.createProducto);
+router.put('/:id', verificarTokenMiddlerware, authAdmin, ProductoHandler.updateProducto);
+router.delete('/:id', verificarTokenMiddlerware, authAdmin, ProductoHandler.deleteProducto);
 
 
 

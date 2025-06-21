@@ -1,5 +1,6 @@
 const db = require('../models');
 const Producto = db.Producto;
+const Presentacion = db.Presentacion;
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const AppError = require('../utilits/helpers/errors');
@@ -7,6 +8,7 @@ const AppError = require('../utilits/helpers/errors');
 class ProductoService {
   constructor() {
     this.producto = Producto;
+    this.presentacion = Presentacion;
   }
   // Obtener todos los productos
   async getAll() {
@@ -98,7 +100,7 @@ class ProductoService {
     }
     const existeProducto = await this.producto.findOne({ where });
     return !!existeProducto;
-}
+  }
   async existeById(id_producto) {
     try {
       const existeProducto = await this.producto.findOne({
@@ -119,11 +121,27 @@ class ProductoService {
       throw new AppError('Producto no encontrado', 404);
     }
   
-    if (producto.estado_producto !== true) {
+    if (producto.estado_producto !== "activo") {
       throw new AppError('El producto no está activo', 400);
     }
   
     return producto;
+  }
+
+  async verificarStockDisponible(id_presentacion, cantidadSolicitada) {
+    const presentacion = await this.presentacion.findOne({
+      where: { id_presentacion }
+    });
+
+    if (!presentacion) {
+      throw new AppError("La presentación no existe", 404);
+    }
+
+    if (presentacion.stock < cantidadSolicitada) {
+      throw new AppError(`Stock insuficiente: disponible ${presentacion.stock}`, 400);
+    }
+
+    return true;
   }
 
 };

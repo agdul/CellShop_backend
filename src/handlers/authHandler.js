@@ -5,7 +5,7 @@ class AuthHandler {
     static async login(req, res){
         try {
             const data = req.body;
-            console.log('Datos recibidos para inicio de sesión:', data);
+            //console.log('Datos recibidos para inicio de sesión:', data);
             if (!data.usuario || !data.password) {
                 throw new AppError('Usuario y contraseña son requeridos', 400);
             }

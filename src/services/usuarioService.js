@@ -51,6 +51,7 @@ class UsuarioService {
         if (!usario || usario.length === 0) {
             throw new AppError("Usuario no encontrado", 404);
         }
+        return usario;
     };
     // Crear un usuario dentro de una transacción
     async create(data) {

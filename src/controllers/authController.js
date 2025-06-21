@@ -15,6 +15,7 @@ class AuthController{
     static async loginUsuario(usuario, password) {
         try {
         const user = await usuarioService.existeByUsuario(usuario);
+        //console.log("🧠 Usuario para token:", user.toJSON());
         if (!user) {
             throw new AppError('Usuario no encontrado', 404);
         }
@@ -22,9 +23,9 @@ class AuthController{
         if (!isPasswordValid) {
             throw new AppError('Contraseña incorrecta', 401);
         }
-        console.log('Usuario encontrado:', user.id_usuario);
+        //console.log('Usuario encontrado:', user.id_usuario);
         // Generar el token de sesión
-        const token = await generarToken(user.id_usuario);
+        const token = await generarToken(user.toJSON());
         return { ...user.toJSON(), token: token };
         } catch (error) {  
             console.error('Error en loginUsuario:', error);
@@ -38,20 +39,23 @@ class AuthController{
 
     static async registrarUsuario(data, password) {
         try {
-            const existingUser = await usuarioService.existeByUsuario(data.usuario);
-            if (existingUser) {
-                throw new AppError('El usuario ya existe', 409);
-            }
-            const hashedPassword = await hashPassword(password);
-            const newUser = await usuarioService.create({
-              ...data,
-              password: hashedPassword,
-            });
-            const token = await generarToken(newUser.id_usuario);
-            if (!token) {
-                throw new AppError('Error al generar el token', 500);
-            }
-            return { ...newUser.toJSON(), token: token };
+          const existingUser = await usuarioService.existeByUsuario(
+            data.usuario
+          );
+          if (existingUser) {
+            throw new AppError("El usuario ya existe", 409);
+          }
+          const hashedPassword = await hashPassword(password);
+          const newUser = await usuarioService.create({
+            ...data,
+            password: hashedPassword,
+          });
+          //console.log("🧠 Usuario para token:", newUser.toJSON());
+          const token = await generarToken(newUser.toJSON());
+          if (!token) {
+            throw new AppError("Error al generar el token", 500);
+          }
+          return { ...newUser.toJSON(), token: token };
         } catch (error) {
             console.error('Error en registrarUsuario:', error);
             if (error instanceof AppError) {
