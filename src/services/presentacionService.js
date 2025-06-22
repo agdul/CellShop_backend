@@ -128,6 +128,40 @@ class PresentacionService {
     }
   }
 
+  async descontarStock(id_presentacion, cantidad, options = {}) {
+  const presentacion = await this.presentacion.findOne({ where: { id_presentacion } });
+
+  if (!presentacion) {
+    throw new AppError("Presentación no encontrada", 404);
+  }
+
+  if (presentacion.stock < cantidad) {
+    throw new AppError(`Stock insuficiente. Disponible: ${presentacion.stock}`, 400);
+  }
+
+  // Descontar
+  presentacion.stock -= cantidad;
+  await presentacion.save(options);
+ }
+
+ async verificarStockDisponible(id_presentacion, cantidadSolicitada) {
+  const presentacion = await this.presentacion.findOne({
+    where: { id_presentacion }
+  });
+
+  if (!presentacion) {
+    throw new AppError("La presentación no existe", 404);
+  }
+
+  if (presentacion.stock < cantidadSolicitada) {
+    throw new AppError(`Stock insuficiente: disponible ${presentacion.stock}`, 400);
+  }
+
+  return true;
+  }
+
+
+
   // async verificarPresentacionActivo(id_presentacion) {
   //   const presentacion = await this.existeById(id_presentacion);
   //   if (presentacion.estado !== 'Activo' && producto.estado !== true) {

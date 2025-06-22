@@ -26,60 +26,73 @@ class CarritoController {
     }
   }
 
-  static async agregarProductoCarrito(data) {
-    const t = await db.sequelize.transaction();
-    try {
-      const { id_usuario, id_presentacion, cantidad, precio_unitario } = data;
-  
-      // Verificar presentación
-      const presentacion = await presentacionService.getById(id_presentacion);
-      if (!presentacion) {
-        throw new AppError('La presentación indicada no existe', 404);
-      }
-  
-      // Validar stock
-      await productoService.verificarStockDisponible(id_presentacion, cantidad);
-  
-      // Obtener o crear carrito
-      let carrito = await carritoService.getCarritoActivo(id_usuario);
-      if (!carrito) {
-        carrito = await carritoService.create({ id_usuario, estado: 'activo' }, { transaction: t });
-      }
-  
-      // ✅ Buscar si ya existe ese producto en el carrito
-      const detalleExistente = await carritoDetalleService.getByCarritoAndPresentacion(
-        carrito.id_carrito,
-        id_presentacion
+static async agregarProductoCarrito(data) {
+  const t = await db.sequelize.transaction();
+  try {
+    const { id_usuario, id_presentacion, cantidad } = data;
+
+    // Verificar presentación
+    const presentacion = await presentacionService.getById(id_presentacion);
+    if (!presentacion) {
+      throw new AppError('La presentación indicada no existe', 404);
+    }
+
+    // Validar stock
+    await productoService.verificarStockDisponible(id_presentacion, cantidad);
+
+    // Obtener o crear carrito
+    let carrito = await carritoService.getCarritoActivo(id_usuario);
+    if (!carrito) {
+      carrito = await carritoService.create(
+        { id_usuario, estado: 'activo' },
+        { transaction: t }
       );
-  
-      if (detalleExistente) {
-        // Si ya existe, actualizar cantidad
-        const nuevaCantidad = detalleExistente.cantidad + cantidad;
-        const actualizado = await carritoDetalleService.update({
+    }
+
+    // ✅ Precio unitario tomado de la presentación
+    const precio_unitario = parseFloat((presentacion.precio_compra * (1 + presentacion.porcentaje_aumento / 100)).toFixed(2));
+
+
+    // Buscar si ya existe ese producto en el carrito
+    const detalleExistente = await carritoDetalleService.getByCarritoAndPresentacion(
+      carrito.id_carrito,
+      id_presentacion
+    );
+
+    if (detalleExistente) {
+      // Si ya existe, actualizar cantidad
+      const nuevaCantidad = detalleExistente.cantidad + cantidad;
+      const actualizado = await carritoDetalleService.update(
+        {
           id_carrito_detalle: detalleExistente.id_carrito_detalle,
-          cantidad: nuevaCantidad
-        }, { transaction: t });
-  
-        await t.commit();
-        return actualizado;
-      }
-  
-      // Si no existe, crear uno nuevo
-      const nuevoDetalle = await carritoDetalleService.create({
+          cantidad: nuevaCantidad,
+        },
+        { transaction: t }
+      );
+
+      await t.commit();
+      return actualizado;
+    }
+
+    // Si no existe, crear uno nuevo
+    const nuevoDetalle = await carritoDetalleService.create(
+      {
         id_carrito: carrito.id_carrito,
         id_presentacion,
         cantidad,
-        precio_unitario
-      }, { transaction: t });
-  
-      await t.commit();
-      return nuevoDetalle;
-  
-    } catch (error) {
-      await t.rollback();
-      throw error;
-    }
+        precio_unitario,
+      },
+      { transaction: t }
+    );
+
+    await t.commit();
+    return nuevoDetalle;
+  } catch (error) {
+    await t.rollback();
+    throw error;
   }
+}
+
   
   static async modificarProductoCarrito(data) {
     const t = await db.sequelize.transaction();

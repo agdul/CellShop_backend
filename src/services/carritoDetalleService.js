@@ -20,7 +20,6 @@ class CarritoDetalleService {
     return detalle;
   }
   
-
   async create(data, options = {}) {
     const nuevoDetalle = await this.detalle.create(data, options);
     return nuevoDetalle;
@@ -41,7 +40,6 @@ class CarritoDetalleService {
     return await this.getById(id_carrito_detalle, options);
   }
   
-
   async delete(id_carrito_detalle) {
     const t = await db.sequelize.transaction();
     try {
@@ -73,7 +71,14 @@ class CarritoDetalleService {
       }
     });
   }
-  
+
+  async getAllByCarritoId(id_carrito, options = {}) {
+  return await this.detalle.findAll({
+    where: { id_carrito },
+    transaction: options.transaction
+  });
+  }
+
 }
 
 module.exports = CarritoDetalleService;

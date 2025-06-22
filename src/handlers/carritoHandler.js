@@ -23,14 +23,14 @@ class CarritoHandler {
 
   static async agregarProductoCarrito(req, res) {
     try {
-      const id_usuario = req.user?.id_usuario;
-      const { id_presentacion, cantidad, precio_unitario } = req.body;
+      //const id_usuario = req.user?.id_usuario;
+      const { id_presentacion, cantidad, id_usuario } = req.body;
 
-      if (!id_usuario || !id_presentacion || !cantidad || !precio_unitario) {
-        throw new AppError('Faltan datos requeridos: id_presentacion, cantidad y precio_unitario', 400);
+      if (!id_usuario || !id_presentacion || !cantidad ) {
+        throw new AppError('Faltan datos requeridos: id_presentacion, cantidad', 400);
       }
 
-      const data = { id_usuario, id_presentacion, cantidad, precio_unitario };
+      const data = { id_usuario, id_presentacion, cantidad };
       const result = await CarritoController.agregarProductoCarrito(data);
       res.status(201).json(result);
     } catch (error) {
@@ -61,7 +61,6 @@ class CarritoHandler {
       res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
   }
-
   static async eliminarProductoCarrito(req, res) {
     try {
       const { id_carrito_detalle } = req.params;
@@ -80,7 +79,7 @@ class CarritoHandler {
       res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
   }
-  
+
   static async vaciarCarrito(req, res) {
     try {
       const id_usuario = req.user?.id_usuario;
@@ -99,7 +98,6 @@ class CarritoHandler {
       res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
   }
-  
 }
 
 module.exports = CarritoHandler;
